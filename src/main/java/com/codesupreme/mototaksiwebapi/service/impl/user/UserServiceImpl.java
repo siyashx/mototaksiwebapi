@@ -76,13 +76,6 @@ public class UserServiceImpl implements UserServiceInter {
                 user.setEmail(userDto.getEmail());
             }
 
-            if (userDto.getLocation() != null) {
-                user.setLocation(userDto.getLocation());
-            }
-
-            if (userDto.getLocationUrl() != null) {
-                user.setLocationUrl(userDto.getLocationUrl());
-            }
 
             if (userDto.getPassword() != null) {
                 user.setPassword(userDto.getPassword());

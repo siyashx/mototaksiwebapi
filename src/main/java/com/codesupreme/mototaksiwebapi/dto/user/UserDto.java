@@ -18,8 +18,6 @@ public class UserDto {
     private String name;
     private String phoneNumber;
     private String email;
-    private List<String> location;
-    private String locationUrl;
     private String password;
     private String createdDate;
     @JsonProperty("isDisable")
