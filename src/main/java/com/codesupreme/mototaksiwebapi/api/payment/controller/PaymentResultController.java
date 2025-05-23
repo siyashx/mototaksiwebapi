@@ -19,7 +19,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/v7")
+@RequestMapping("/api/v6")
 public class PaymentResultController {
 
     private static final String PRIVATE_KEY = "VSJnqi0QMovynR5x1cSjO44H";

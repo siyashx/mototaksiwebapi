@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v7")
+@RequestMapping("/api/v6")
 public class PaymentController {
 
     private static final String PRIVATE_KEY = "VSJnqi0QMovynR5x1cSjO44H";
