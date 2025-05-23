@@ -81,6 +81,10 @@ public class UserServiceImpl implements UserServiceInter {
                 user.setPassword(userDto.getPassword());
             }
 
+            if (userDto.getBalance() != null) {
+                user.setBalance(userDto.getBalance());
+            }
+
             if (userDto.getCreatedDate() != null) {
                 user.setCreatedDate(userDto.getCreatedDate());
             }

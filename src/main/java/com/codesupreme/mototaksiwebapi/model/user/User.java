@@ -25,6 +25,7 @@ public class User {
     private String phoneNumber;
     private String email;
     private String password;
+    private Double balance;
     private String createdDate;
     @JsonProperty("isDisable")
     private Boolean isDisable;
