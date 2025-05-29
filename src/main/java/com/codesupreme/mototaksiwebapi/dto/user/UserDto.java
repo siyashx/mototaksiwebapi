@@ -1,5 +1,6 @@
 package com.codesupreme.mototaksiwebapi.dto.user;
 
+import com.codesupreme.mototaksiwebapi.dto.lotoreya.BiletDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class UserDto {
     private String email;
     private String password;
     private Double balance;
+    private List<BiletDto> biletList;
     private String createdDate;
     @JsonProperty("isDisable")
     private Boolean isDisable;

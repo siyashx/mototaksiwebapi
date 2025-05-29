@@ -31,4 +31,11 @@ public class Elan {
     private Boolean isDeleted;
     private String createdAt;
     private String updatedAt;
+
+    // id-only constructor
+    public Elan(Long id) {
+        this.id = id;
+    }
 }
+
+
