@@ -5,6 +5,7 @@ import com.codesupreme.mototaksiwebapi.dao.lotoreya.LotoreyaRepository;
 import com.codesupreme.mototaksiwebapi.dao.user.UserRepository;
 import com.codesupreme.mototaksiwebapi.dto.lotoreya.LotoreyaDto;
 import com.codesupreme.mototaksiwebapi.model.elan.Elan;
+import com.codesupreme.mototaksiwebapi.model.lotoreya.Bilet;
 import com.codesupreme.mototaksiwebapi.model.lotoreya.Lotoreya;
 import com.codesupreme.mototaksiwebapi.model.user.User;
 import com.codesupreme.mototaksiwebapi.service.inter.lotoreya.LotoreyaServiceInter;
@@ -107,7 +108,7 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
             Lotoreya lotoreya = lotoreyaOptional.get();
 
             if (dto.getUserId() != null) {
-                lotoreya.setUser(new User(dto.getUserId(), null, null, null, null, null, null, null, null));
+                lotoreya.setUser(new User(dto.getUserId(), null, null, null, null, null, null, null));
             }
 
             if (dto.getElanId() != null) {
@@ -116,6 +117,14 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
 
             if (dto.getBiletPrice() != null) {
                 lotoreya.setBiletPrice(dto.getBiletPrice());
+            }
+
+            if (dto.getBilets() != null) {
+                List<Bilet> biletEntities = dto.getBilets().stream()
+                        .map(biletDto -> modelMapper.map(biletDto, Bilet.class))
+                        .toList();
+
+                lotoreya.setBilets(biletEntities);
             }
 
             if (dto.getTotalBiletCount() != null) {

@@ -48,5 +48,5 @@ public class Lotoreya {
 
     // Lotoreyaya aid bütün biletlər
     @OneToMany(mappedBy = "lotoreya", cascade = CascadeType.ALL)
-    private List<Bilet> biletList;
+    private List<Bilet> bilets;
 }

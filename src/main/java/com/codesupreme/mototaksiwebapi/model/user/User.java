@@ -1,6 +1,5 @@
 package com.codesupreme.mototaksiwebapi.model.user;
 
-import com.codesupreme.mototaksiwebapi.model.lotoreya.Bilet;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Table
 @Entity
@@ -27,8 +25,6 @@ public class User {
     private String email;
     private String password;
     private Double balance;
-    @OneToMany(mappedBy = "user")
-    private List<Bilet> biletList;
     private String createdDate;
     @JsonProperty("isDisable")
     private Boolean isDisable;

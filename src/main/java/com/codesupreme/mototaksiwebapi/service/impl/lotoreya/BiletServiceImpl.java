@@ -89,12 +89,12 @@ public class BiletServiceImpl implements BiletServiceInter {
         Bilet savedBilet = biletRepository.save(bilet);
 
         // Lotoreya'ya əlavə edirik
-        List<Bilet> biletList = lotoreya.getBiletList();
+        List<Bilet> biletList = lotoreya.getBilets();
         if (biletList == null) {
             biletList = new ArrayList<>();
         }
         biletList.add(savedBilet);
-        lotoreya.setBiletList(biletList);
+        lotoreya.setBilets(biletList);
 
         lotoreyaRepository.save(lotoreya); // Save edirik!
 
