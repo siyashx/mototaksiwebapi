@@ -86,30 +86,20 @@ public class BiletServiceImpl implements BiletServiceInter {
                 .createdAt(new Date())
                 .build();
 
-        Bilet saved = biletRepository.save(bilet);
-        return modelMapper.map(saved, BiletDto.class);
+        Bilet savedBilet = biletRepository.save(bilet);
+
+        // Lotoreya'ya əlavə edirik
+        List<Bilet> biletList = lotoreya.getBiletList();
+        if (biletList == null) {
+            biletList = new ArrayList<>();
+        }
+        biletList.add(savedBilet);
+        lotoreya.setBiletList(biletList);
+
+        lotoreyaRepository.save(lotoreya); // Save edirik!
+
+        return modelMapper.map(savedBilet, BiletDto.class);
     }
-
-    public LotoreyaDto buyBiletAndReturnLotoreya(Long lotoreyaId, Long userId) {
-        // Əvvəlcə bilet al:
-        buyBilet(lotoreyaId, userId);
-
-        // Lotoreya-nı yenidən yüklə:
-        Lotoreya lotoreya = lotoreyaRepository.findById(lotoreyaId).orElseThrow();
-
-        // BiletList-i ayrıca yüklə:
-        List<Bilet> bilets = biletRepository.findByLotoreyaId(lotoreyaId);
-        List<BiletDto> biletDtos = bilets.stream()
-                .map(b -> modelMapper.map(b, BiletDto.class))
-                .toList();
-
-        // LotoreyaDto-nu hazırla:
-        LotoreyaDto lotoreyaDto = modelMapper.map(lotoreya, LotoreyaDto.class);
-        lotoreyaDto.setBilets(biletDtos);
-
-        return lotoreyaDto;
-    }
-
 
     @Override
     public void deleteBilet(Long id) {

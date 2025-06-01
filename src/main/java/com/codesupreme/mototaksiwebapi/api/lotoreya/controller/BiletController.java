@@ -48,12 +48,12 @@ public class BiletController {
         return biletService.getBiletsByLotoreyaId(lotoreyaId);
     }
 
-    // Bilet al → və YENİLƏNMİŞ LotoreyaDto dön
+    // Bilet al
     @PostMapping("/buy")
     public ResponseEntity<?> buyBilet(@RequestParam Long lotoreyaId, @RequestParam Long userId) {
         try {
-            LotoreyaDto updatedLotoreyaDto = biletService.buyBiletAndReturnLotoreya(lotoreyaId, userId);
-            return ResponseEntity.ok(updatedLotoreyaDto);
+            BiletDto updatedBiletDto = biletService.buyBilet(lotoreyaId, userId);
+            return ResponseEntity.ok(updatedBiletDto);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
