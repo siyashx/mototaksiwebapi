@@ -1,6 +1,8 @@
 package com.codesupreme.mototaksiwebapi.service.impl.lotoreya;
 
+import com.codesupreme.mototaksiwebapi.dao.elan.ElanRepository;
 import com.codesupreme.mototaksiwebapi.dao.lotoreya.LotoreyaRepository;
+import com.codesupreme.mototaksiwebapi.dao.user.UserRepository;
 import com.codesupreme.mototaksiwebapi.dto.lotoreya.LotoreyaDto;
 import com.codesupreme.mototaksiwebapi.model.elan.Elan;
 import com.codesupreme.mototaksiwebapi.model.lotoreya.Lotoreya;
@@ -18,11 +20,20 @@ import java.util.Optional;
 public class LotoreyaServiceImpl implements LotoreyaServiceInter {
 
     private final LotoreyaRepository lotoreyaRepository;
+    private final UserRepository userRepository;
+    private final ElanRepository elanRepository;
     private final ModelMapper modelMapper;
 
-    public LotoreyaServiceImpl(LotoreyaRepository lotoreyaRepository, ModelMapper modelMapper) {
+    public LotoreyaServiceImpl(
+            LotoreyaRepository lotoreyaRepository,
+            ModelMapper modelMapper,
+            UserRepository userRepository,
+            ElanRepository elanRepository
+    ) {
         this.lotoreyaRepository = lotoreyaRepository;
         this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
+        this.elanRepository = elanRepository;
     }
 
     @Override
@@ -49,13 +60,42 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
 
     @Override
     public ResponseEntity<LotoreyaDto> createLotoreya(LotoreyaDto lotoreyaDto) {
-        Lotoreya entity = modelMapper.map(lotoreyaDto, Lotoreya.class);
+        Lotoreya entity = new Lotoreya();
+
+        // User və Elan obyekti manual set edilir
+        User user = userRepository.findById(lotoreyaDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User tapılmadı"));
+
+        Elan elan = elanRepository.findById(lotoreyaDto.getElanId())
+                .orElseThrow(() -> new RuntimeException("Elan tapılmadı"));
+
+        entity.setUser(user);
+        entity.setElan(elan);
+
         entity.setIsAccept(false); // default olaraq qeyri-aktiv
         entity.setCreatedAt(new java.util.Date());
 
+        // digər field-lar əgər lazım olsa
+        entity.setBiletPrice(lotoreyaDto.getBiletPrice());
+        entity.setLotoreyaDate(lotoreyaDto.getLotoreyaDate());
+
         Lotoreya saved = lotoreyaRepository.save(entity);
-        return ResponseEntity.ok(modelMapper.map(saved, LotoreyaDto.class));
+
+        // Geri dönərkən userId və elanId yenidən doldurulsun
+        LotoreyaDto responseDto = new LotoreyaDto();
+        responseDto.setId(saved.getId());
+        responseDto.setUserId(saved.getUser().getId());
+        responseDto.setElanId(saved.getElan().getId());
+        responseDto.setIsAccept(saved.getIsAccept());
+        responseDto.setCreatedAt(saved.getCreatedAt());
+        responseDto.setBiletPrice(saved.getBiletPrice());
+        responseDto.setLotoreyaDate(saved.getLotoreyaDate());
+
+        // carx və biletList boş qala bilər (əgər indi əlavə olunmursa)
+
+        return ResponseEntity.ok(responseDto);
     }
+
 
     @Override
     public LotoreyaDto updateLotoreya(Long id, LotoreyaDto dto) {
