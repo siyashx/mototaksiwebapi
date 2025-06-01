@@ -77,6 +77,7 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
 
         // digər field-lar əgər lazım olsa
         entity.setBiletPrice(lotoreyaDto.getBiletPrice());
+        entity.setTotalBiletCount(lotoreyaDto.getTotalBiletCount());
         entity.setLotoreyaDate(lotoreyaDto.getLotoreyaDate());
 
         Lotoreya saved = lotoreyaRepository.save(entity);
@@ -89,6 +90,7 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
         responseDto.setIsAccept(saved.getIsAccept());
         responseDto.setCreatedAt(saved.getCreatedAt());
         responseDto.setBiletPrice(saved.getBiletPrice());
+        responseDto.setTotalBiletCount(saved.getTotalBiletCount());
         responseDto.setLotoreyaDate(saved.getLotoreyaDate());
 
         // carx və biletList boş qala bilər (əgər indi əlavə olunmursa)
