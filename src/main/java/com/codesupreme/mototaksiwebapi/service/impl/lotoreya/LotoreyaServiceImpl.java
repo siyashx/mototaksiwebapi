@@ -112,9 +112,12 @@ public class LotoreyaServiceImpl implements LotoreyaServiceInter {
                 lotoreya.setElan(new Elan(dto.getElanId()));
             }
 
-
             if (dto.getBiletPrice() != null) {
                 lotoreya.setBiletPrice(dto.getBiletPrice());
+            }
+
+            if (dto.getTotalBiletCount() != null) {
+                lotoreya.setTotalBiletCount(dto.getTotalBiletCount());
             }
 
             if (dto.getLotoreyaDate() != null) {

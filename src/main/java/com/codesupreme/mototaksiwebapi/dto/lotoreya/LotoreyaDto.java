@@ -21,6 +21,7 @@ public class LotoreyaDto {
     private List<BiletDto> bilets;
 
     private Double biletPrice;
+    private Integer totalBiletCount;
     private Date lotoreyaDate;
     private Boolean isAccept;
     private Date createdAt;

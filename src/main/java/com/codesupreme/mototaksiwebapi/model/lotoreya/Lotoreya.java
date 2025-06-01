@@ -32,6 +32,8 @@ public class Lotoreya {
 
     private Double biletPrice;
 
+    private Integer totalBiletCount;
+
     @Temporal(TemporalType.DATE)
     private Date lotoreyaDate;
 
