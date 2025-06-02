@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CarxServiceImpl implements CarxServiceInter {
@@ -83,15 +84,17 @@ public class CarxServiceImpl implements CarxServiceInter {
     }
 
     @Override
-    public CarxDto assignWinner(Long lotoreyaId) {
+    public CarxDto assignWinner(Long lotoreyaId, List<String> finalistCodes) {
         Lotoreya lotoreya = lotoreyaRepository.findById(lotoreyaId).orElse(null);
-        if (lotoreya == null) return null;
+        if (lotoreya == null || finalistCodes == null || finalistCodes.size() < 2) return null;
 
-        List<Bilet> bilets = biletRepository.findByLotoreyaId(lotoreyaId);
-        if (bilets.isEmpty()) throw new RuntimeException("Bu lotoreyada heç bir bilet yoxdur.");
+        List<Bilet> finalists = biletRepository.findByLotoreyaId(lotoreyaId).stream()
+                .filter(b -> finalistCodes.contains(b.getCode()))
+                .collect(Collectors.toList());
 
-        // Random qalib seç
-        Bilet winnerBilet = bilets.get(new Random().nextInt(bilets.size()));
+        if (finalists.size() < 2) throw new RuntimeException("2 finalist tapılmadı.");
+
+        Bilet winnerBilet = finalists.get(new Random().nextInt(finalists.size()));
 
         Carx carx = Carx.builder()
                 .lotoreya(lotoreya)
@@ -102,10 +105,10 @@ public class CarxServiceImpl implements CarxServiceInter {
 
         Carx saved = carxRepository.save(carx);
 
-        // Əlaqələndir lotoreya ilə (optional)
         lotoreya.setCarx(saved);
         lotoreyaRepository.save(lotoreya);
 
         return modelMapper.map(saved, CarxDto.class);
     }
+
 }

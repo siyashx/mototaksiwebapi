@@ -1,5 +1,6 @@
 package com.codesupreme.mototaksiwebapi.api.lotoreya.controller;
 
+import com.codesupreme.mototaksiwebapi.dto.lotoreya.AssignWinnerRequest;
 import com.codesupreme.mototaksiwebapi.dto.lotoreya.CarxDto;
 import com.codesupreme.mototaksiwebapi.service.impl.lotoreya.CarxServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -57,14 +58,14 @@ public class CarxController {
         return ResponseEntity.ok().build();
     }
 
-    // Lotoreya üzrə random qalib təyin et
-    @PostMapping("/assign/{lotoreyaId}")
-    public ResponseEntity<?> assignWinner(@PathVariable Long lotoreyaId) {
+    @PostMapping("/assign")
+    public ResponseEntity<?> assignWinner(@RequestBody AssignWinnerRequest request) {
         try {
-            CarxDto winner = carxService.assignWinner(lotoreyaId);
+            CarxDto winner = carxService.assignWinner(request.getLotoreyaId(), request.getCodes());
             return ResponseEntity.ok(winner);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 }

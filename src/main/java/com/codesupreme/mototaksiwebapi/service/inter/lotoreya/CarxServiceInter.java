@@ -15,7 +15,6 @@ public interface CarxServiceInter {
 
     void deleteCarxById(Long id);
 
-    // Əsas funksiya: lotoreyada qalibi təyin etmək
-    CarxDto assignWinner(Long lotoreyaId);
+    CarxDto assignWinner(Long lotoreyaId, List<String> codes);
 }
 
