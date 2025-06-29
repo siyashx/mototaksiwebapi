@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserServiceInter {
             return ResponseEntity.badRequest().build();
         }
         userEntity.setIsDisable(false);
+        userEntity.setBalance(0.00);
         User savedUser = userRepository.save(userEntity);
         return ResponseEntity.ok(modelMapper.map(savedUser, UserDto.class));
 
