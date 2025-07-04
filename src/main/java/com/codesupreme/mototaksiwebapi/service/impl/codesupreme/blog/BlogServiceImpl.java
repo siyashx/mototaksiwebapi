@@ -100,6 +100,11 @@ public class BlogServiceImpl implements BlogServiceInter {
         return blogDtos;
     }
 
+    public Blog getBlogBySlug(String slug) {
+        return blogRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Blog tapılmadı!"));
+    }
+
 
     @Override
     public void deleteBlog(Long id) {

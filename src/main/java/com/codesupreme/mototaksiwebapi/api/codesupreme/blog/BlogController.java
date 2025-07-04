@@ -1,6 +1,7 @@
 package com.codesupreme.mototaksiwebapi.api.codesupreme.blog;
 
 import com.codesupreme.mototaksiwebapi.dto.codesupreme.blog.BlogDto;
+import com.codesupreme.mototaksiwebapi.model.codesupreme.blog.Blog;
 import com.codesupreme.mototaksiwebapi.service.impl.codesupreme.blog.BlogServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +68,12 @@ public class BlogController {
     public ResponseEntity<List<BlogDto>> getBlogsByCategory(@RequestParam("category") String category) {
         List<BlogDto> result = blogService.getBlogsByCategory(category);
         return ResponseEntity.ok(result);
+    }
+
+    // Blogu slug ilə tapmaq üçün yeni endpoint
+    @GetMapping("/slug/{slug}")
+    public Blog getBlogBySlug(@PathVariable String slug) {
+        return blogService.getBlogBySlug(slug);
     }
 
 

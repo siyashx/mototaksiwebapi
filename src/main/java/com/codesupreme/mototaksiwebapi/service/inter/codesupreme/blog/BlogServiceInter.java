@@ -17,6 +17,8 @@ public interface BlogServiceInter {
 
     List<BlogDto> getBlogsByCategory(String category);
 
+
+
     BlogDto updateBlog(Long id, BlogDto blogDto);
 
     void deleteBlog(Long id);
