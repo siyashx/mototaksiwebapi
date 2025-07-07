@@ -13,6 +13,8 @@ public interface BiletServiceInter {
 
     List<BiletDto> getBiletsByUserId(Long userId);
 
+    List<BiletDto> getBiletsByUserIdAndLotoreyaId(Long userId, Long lotoreyaId);
+
     // Əsas funksiya: istifadəçi bilet alır
     BiletDto buyBilet(Long lotoreyaId, Long userId);
 

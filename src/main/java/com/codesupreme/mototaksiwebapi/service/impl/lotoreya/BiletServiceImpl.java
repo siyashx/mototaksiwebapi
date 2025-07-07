@@ -4,13 +4,14 @@ import com.codesupreme.mototaksiwebapi.dao.lotoreya.BiletRepository;
 import com.codesupreme.mototaksiwebapi.dao.lotoreya.LotoreyaRepository;
 import com.codesupreme.mototaksiwebapi.dao.user.UserRepository;
 import com.codesupreme.mototaksiwebapi.dto.lotoreya.BiletDto;
-import com.codesupreme.mototaksiwebapi.dto.lotoreya.LotoreyaDto;
 import com.codesupreme.mototaksiwebapi.model.lotoreya.Bilet;
 import com.codesupreme.mototaksiwebapi.model.lotoreya.Lotoreya;
 import com.codesupreme.mototaksiwebapi.model.user.User;
 import com.codesupreme.mototaksiwebapi.service.inter.lotoreya.BiletServiceInter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,6 +64,14 @@ public class BiletServiceImpl implements BiletServiceInter {
     }
 
     @Override
+    public List<BiletDto> getBiletsByUserIdAndLotoreyaId(Long userId, Long lotoreyaId) {
+        return biletRepository.findByUserIdAndLotoreyaId(userId, lotoreyaId).stream()
+                .map(b -> modelMapper.map(b, BiletDto.class))
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
     public BiletDto buyBilet(Long lotoreyaId, Long userId) {
         Lotoreya lotoreya = lotoreyaRepository.findById(lotoreyaId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
@@ -80,7 +89,7 @@ public class BiletServiceImpl implements BiletServiceInter {
 
         // Yeni bilet yaradılır
         Bilet bilet = Bilet.builder()
-                .code(generateBiletCode())
+                .code(generateBiletCode(lotoreyaId))
                 .lotoreya(lotoreya)
                 .user(user)
                 .createdAt(new Date())
@@ -106,7 +115,22 @@ public class BiletServiceImpl implements BiletServiceInter {
         biletRepository.deleteById(id);
     }
 
-    private String generateBiletCode() {
-        return "B-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    private String generateBiletCode(Long lotoreyaId) {
+        List<Bilet> lotoreyaBilets = biletRepository.findByLotoreyaId(lotoreyaId);
+
+        OptionalInt maxCode = lotoreyaBilets.stream()
+                .mapToInt(b -> {
+                    try {
+                        return Integer.parseInt(b.getCode());
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                })
+                .max();
+
+        int next = maxCode.orElse(0) + 1;
+        return String.format("%05d", next); // 00001, 00002 və s.
     }
+
+
 }

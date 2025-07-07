@@ -1,9 +1,6 @@
 package com.codesupreme.mototaksiwebapi.api.lotoreya.controller;
 
 import com.codesupreme.mototaksiwebapi.dto.lotoreya.BiletDto;
-import com.codesupreme.mototaksiwebapi.dto.lotoreya.LotoreyaDto;
-import com.codesupreme.mototaksiwebapi.model.lotoreya.Bilet;
-import com.codesupreme.mototaksiwebapi.model.lotoreya.Lotoreya;
 import com.codesupreme.mototaksiwebapi.service.impl.lotoreya.BiletServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +44,12 @@ public class BiletController {
     public List<BiletDto> getBiletsByLotoreyaId(@PathVariable Long lotoreyaId) {
         return biletService.getBiletsByLotoreyaId(lotoreyaId);
     }
+
+    @GetMapping("/user/{userId}/lotoreya/{lotoreyaId}")
+    public List<BiletDto> getUserBiletsByLotoreya(@PathVariable Long userId, @PathVariable Long lotoreyaId) {
+        return biletService.getBiletsByUserIdAndLotoreyaId(userId, lotoreyaId);
+    }
+
 
     // Bilet al
     @PostMapping("/buy")

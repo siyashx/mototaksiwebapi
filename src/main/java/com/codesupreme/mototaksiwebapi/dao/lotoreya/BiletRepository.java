@@ -10,4 +10,7 @@ public interface BiletRepository extends JpaRepository<Bilet, Long> {
     List<Bilet> findByUserId(Long userId);
 
     List<Bilet> findByLotoreyaId(Long lotoreyaId);
+
+    List<Bilet> findByUserIdAndLotoreyaId(Long userId, Long lotoreyaId);
+
 }
