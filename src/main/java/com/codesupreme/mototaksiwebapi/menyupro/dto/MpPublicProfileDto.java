@@ -13,4 +13,5 @@ public class MpPublicProfileDto {
     public String bio;
     public String profileImage;
     public String slug;
+    public String phone;
 }
