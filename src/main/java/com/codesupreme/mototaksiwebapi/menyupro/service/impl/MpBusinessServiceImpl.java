@@ -4,6 +4,7 @@ import com.codesupreme.mototaksiwebapi.menyupro.dao.MpBusinessRepository;
 import com.codesupreme.mototaksiwebapi.menyupro.dto.MpBusinessDto;
 import com.codesupreme.mototaksiwebapi.menyupro.model.MpBusiness;
 import com.codesupreme.mototaksiwebapi.menyupro.service.MpBusinessService;
+import com.codesupreme.mototaksiwebapi.menyupro.util.PhoneUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,17 @@ public class MpBusinessServiceImpl implements MpBusinessService {
     @Override
     public MpBusinessDto register(String businessName, String phone, String password) {
 
-        if (businessRepo.existsByPhone(phone)) {
+        String normalized = PhoneUtil.normalize(phone);
+
+        if (businessRepo.existsByPhone(normalized)) {
             throw new RuntimeException("Phone already registered");
         }
 
         MpBusiness business = new MpBusiness();
         business.setBusinessName(businessName);
-        business.setPhone(phone);
+        business.setPhone(normalized); // ✅ normalize saxla
         business.setPassword(password);
+        business.setPhoneVerified(false);
 
 
         String baseSlug = businessName.toLowerCase().replaceAll(" ", "-");
@@ -48,7 +52,9 @@ public class MpBusinessServiceImpl implements MpBusinessService {
     @Override
     public MpBusinessDto login(String phone, String password) {
 
-        MpBusiness business = businessRepo.findByPhone(phone)
+        String normalized = PhoneUtil.normalize(phone);
+
+        MpBusiness business = businessRepo.findByPhone(normalized)
                 .orElseThrow(() -> new RuntimeException("Business not found"));
 
         if (!business.getPassword().equals(password)) {
@@ -61,6 +67,7 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
         return mapper.map(business, MpBusinessDto.class);
     }
+
 
     @Override
     public MpBusinessDto getProfile(Long id) {
