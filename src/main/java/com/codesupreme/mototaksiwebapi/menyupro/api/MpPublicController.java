@@ -33,6 +33,7 @@ public class MpPublicController {
         dto.bio = business.getBio();
         dto.profileImage = business.getProfileImage();
         dto.slug = business.getSlug();
+        dto.phone = business.getPhone();
 
         return dto;
     }
