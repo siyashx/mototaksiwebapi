@@ -15,6 +15,10 @@ public class MpBusiness {
 
     private String businessName;
     private String phone;
+
+    @Column(nullable = false)
+    private Boolean phoneVerified = false;
+
     private String password;
 
     private String profileImage;

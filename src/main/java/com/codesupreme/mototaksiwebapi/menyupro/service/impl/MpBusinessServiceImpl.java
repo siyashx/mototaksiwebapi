@@ -14,6 +14,7 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
     private final MpBusinessRepository businessRepo;
     private final ModelMapper mapper;
+    private final MpOtpService otpService;
 
     @Override
     public MpBusinessDto register(String businessName, String phone, String password) {
@@ -38,6 +39,9 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
         business.setSlug(slug);
 
+        // OTP göndər
+        otpService.sendOtp(phone);
+
         return mapper.map(businessRepo.save(business), MpBusinessDto.class);
     }
 
@@ -49,6 +53,10 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
         if (!business.getPassword().equals(password)) {
             throw new RuntimeException("Wrong password");
+        }
+
+        if (!Boolean.TRUE.equals(business.getPhoneVerified())) {
+            throw new RuntimeException("Telefon təsdiqlənməyib");
         }
 
         return mapper.map(business, MpBusinessDto.class);
