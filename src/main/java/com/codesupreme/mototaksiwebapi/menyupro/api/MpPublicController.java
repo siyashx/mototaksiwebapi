@@ -1,6 +1,7 @@
 package com.codesupreme.mototaksiwebapi.menyupro.api;
 
 import com.codesupreme.mototaksiwebapi.menyupro.dao.MpBusinessRepository;
+import com.codesupreme.mototaksiwebapi.menyupro.dto.MpApprovalStateDto;
 import com.codesupreme.mototaksiwebapi.menyupro.dto.MpProductDto;
 import com.codesupreme.mototaksiwebapi.menyupro.dto.MpPublicProfileDto;
 import com.codesupreme.mototaksiwebapi.menyupro.model.MpBusiness;
@@ -37,4 +38,11 @@ public class MpPublicController {
 
         return dto;
     }
+
+    @GetMapping("/public/approval/{slug}")
+    public MpApprovalStateDto approval(@PathVariable String slug) {
+        MpBusiness b = businessRepo.findBySlug(slug).orElseThrow();
+        return new MpApprovalStateDto(b.getApprovalStatus(), b.getIsActive(), b.getRejectReason());
+    }
+
 }

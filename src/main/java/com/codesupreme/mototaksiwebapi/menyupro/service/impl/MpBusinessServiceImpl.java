@@ -2,6 +2,7 @@ package com.codesupreme.mototaksiwebapi.menyupro.service.impl;
 
 import com.codesupreme.mototaksiwebapi.menyupro.dao.MpBusinessRepository;
 import com.codesupreme.mototaksiwebapi.menyupro.dto.MpBusinessDto;
+import com.codesupreme.mototaksiwebapi.menyupro.model.MpApprovalStatus;
 import com.codesupreme.mototaksiwebapi.menyupro.model.MpBusiness;
 import com.codesupreme.mototaksiwebapi.menyupro.service.MpBusinessService;
 import com.codesupreme.mototaksiwebapi.menyupro.util.PhoneUtil;
@@ -31,6 +32,8 @@ public class MpBusinessServiceImpl implements MpBusinessService {
         business.setPhone(normalized); // ✅ normalize saxla
         business.setPassword(password);
         business.setPhoneVerified(false);
+        business.setApprovalStatus(MpApprovalStatus.PENDING);
+        business.setIsActive(false);
 
 
         String baseSlug = businessName.toLowerCase().replaceAll(" ", "-");
@@ -62,7 +65,19 @@ public class MpBusinessServiceImpl implements MpBusinessService {
         }
 
         if (!Boolean.TRUE.equals(business.getPhoneVerified())) {
-            throw new RuntimeException("Telefon təsdiqlənməyib");
+            throw new RuntimeException("PHONE_NOT_VERIFIED");
+        }
+
+        if (business.getApprovalStatus() == MpApprovalStatus.PENDING) {
+            throw new RuntimeException("APPROVAL_PENDING");
+        }
+
+        if (business.getApprovalStatus() == MpApprovalStatus.REJECTED) {
+            throw new RuntimeException("APPROVAL_REJECTED");
+        }
+
+        if (!Boolean.TRUE.equals(business.getIsActive())) {
+            throw new RuntimeException("ACCOUNT_INACTIVE");
         }
 
         return mapper.map(business, MpBusinessDto.class);

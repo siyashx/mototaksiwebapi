@@ -19,6 +19,16 @@ public class MpBusiness {
     @Column(nullable = false)
     private Boolean phoneVerified = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MpApprovalStatus approvalStatus = MpApprovalStatus.PENDING;
+
+    @Column(nullable = false)
+    private Boolean isActive = false;
+
+    // (opsional) admin reject reason
+    private String rejectReason;
+
     private String password;
 
     private String profileImage;
