@@ -41,6 +41,11 @@ public class MpOtpService {
     public boolean verify(String phone, String code) {
         String normalized = PhoneUtil.normalize(phone);
 
+        String cleanCode = (code == null ? "" : code.trim().replaceAll("\\D", ""));
+        if (cleanCode.length() != 6) {
+            throw new RuntimeException("OTP formatı yanlışdır");
+        }
+
         MpOtp rec = otpRepo.findTopByPhoneOrderByIdDesc(normalized)
                 .orElseThrow(() -> new RuntimeException("OTP tapılmadı, yenidən göndərin"));
 
@@ -50,7 +55,7 @@ public class MpOtpService {
 
         rec.setAttempts(rec.getAttempts() + 1);
 
-        if (!rec.getCode().equals(code)) {
+        if (!rec.getCode().equals(cleanCode)) {
             otpRepo.save(rec);
             throw new RuntimeException("OTP yanlışdır");
         }
@@ -58,7 +63,8 @@ public class MpOtpService {
         rec.setUsed(true);
         otpRepo.save(rec);
 
-        MpBusiness b = businessRepo.findByPhone(normalized).orElseThrow();
+        MpBusiness b = businessRepo.findByPhone(normalized)
+                .orElseThrow(() -> new RuntimeException("Biznes tapılmadı (telefonla)"));
         b.setPhoneVerified(true);
         businessRepo.save(b);
 
