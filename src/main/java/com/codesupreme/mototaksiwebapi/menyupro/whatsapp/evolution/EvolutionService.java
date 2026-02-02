@@ -28,4 +28,25 @@ public class EvolutionService {
         // Əgər gələcəkdə problem olsa:
         // client.sendText(PhoneUtil.toWaJid(normalized), msg);
     }
+
+    public void notifyAdminNewBusiness(String businessName, String phone) {
+
+        String normalized = PhoneUtil.normalize(phone);
+
+        String msg = """
+            🆕 Yeni MenuPro Biznes Qeydiyyatı
+            
+            Biznes: %s
+            Telefon: %s
+            
+            Status: PENDING
+            Admin paneldən təsdiqləyin.
+            """.formatted(businessName, normalized);
+
+        // 🔴 Admin nömrəsi
+        String adminPhone = "994709559984";
+
+        client.sendText(adminPhone, msg);
+    }
+
 }

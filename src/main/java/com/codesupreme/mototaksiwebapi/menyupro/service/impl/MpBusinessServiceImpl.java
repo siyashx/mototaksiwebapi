@@ -6,9 +6,12 @@ import com.codesupreme.mototaksiwebapi.menyupro.model.MpApprovalStatus;
 import com.codesupreme.mototaksiwebapi.menyupro.model.MpBusiness;
 import com.codesupreme.mototaksiwebapi.menyupro.service.MpBusinessService;
 import com.codesupreme.mototaksiwebapi.menyupro.util.PhoneUtil;
+import com.codesupreme.mototaksiwebapi.menyupro.whatsapp.evolution.EvolutionService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class MpBusinessServiceImpl implements MpBusinessService {
     private final MpBusinessRepository businessRepo;
     private final ModelMapper mapper;
     private final MpOtpService otpService;
+    private final EvolutionService evolutionService;
 
     @Override
     public MpBusinessDto register(String businessName, String phone, String password) {
@@ -48,6 +52,8 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
         // OTP göndər
         otpService.sendOtp(phone);
+
+        evolutionService.notifyAdminNewBusiness(businessName, normalized);
 
         return mapper.map(businessRepo.save(business), MpBusinessDto.class);
     }
@@ -100,4 +106,43 @@ public class MpBusinessServiceImpl implements MpBusinessService {
 
         return mapper.map(businessRepo.save(business), MpBusinessDto.class);
     }
+
+
+    @Override
+    public List<MpBusinessDto> adminGetAll() {
+        return businessRepo.findAll()
+                .stream()
+                .map(b -> mapper.map(b, MpBusinessDto.class))
+                .toList();
+    }
+
+    @Override
+    public List<MpBusinessDto> adminGetPending() {
+        return businessRepo.findAllByApprovalStatusOrderByIdDesc(MpApprovalStatus.PENDING)
+                .stream()
+                .map(b -> mapper.map(b, MpBusinessDto.class))
+                .toList();
+    }
+
+    @Override
+    public void adminSetStatus(Long id, MpApprovalStatus status, String reason) {
+        MpBusiness b = businessRepo.findById(id).orElseThrow();
+
+        b.setApprovalStatus(status);
+
+        if (status == MpApprovalStatus.APPROVED) {
+            b.setIsActive(true);
+            b.setRejectReason(null);
+        } else if (status == MpApprovalStatus.REJECTED) {
+            b.setIsActive(false);
+            b.setRejectReason(reason);
+        } else {
+            // PENDING (praktikada admin bunu eləmir, amma fallback)
+            b.setIsActive(false);
+        }
+
+        businessRepo.save(b);
+    }
+
+
 }
