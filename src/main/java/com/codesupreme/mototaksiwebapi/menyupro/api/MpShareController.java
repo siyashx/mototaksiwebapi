@@ -49,7 +49,8 @@ public class MpShareController {
 
     private String readIndexHtml() throws Exception {
         // ✅ classpath-dan oxu (səndə əvvəldə /var/www/... səhvi burdan çıxmışdı)
-        ClassPathResource res = new ClassPathResource("static/index.html");
+        ClassPathResource res = new ClassPathResource("mp-share/index.html");
+
         return StreamUtils.copyToString(res.getInputStream(), StandardCharsets.UTF_8);
     }
 
