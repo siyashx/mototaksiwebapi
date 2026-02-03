@@ -3,14 +3,8 @@ package com.codesupreme.mototaksiwebapi.menyupro.api;
 import com.codesupreme.mototaksiwebapi.menyupro.dao.MpBusinessRepository;
 import com.codesupreme.mototaksiwebapi.menyupro.model.MpBusiness;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,27 +12,43 @@ public class MpShareController {
 
     private final MpBusinessRepository businessRepo;
 
-    // ✅ React build index.html-in real yolu
-    @Value("${mp.share.indexPath:/var/www/mototaksi/index.html}")
-    private String indexPath;
-
     @GetMapping(value = "/{slug}", produces = MediaType.TEXT_HTML_VALUE)
-    public String sharePage(@PathVariable String slug) throws Exception {
+    public String sharePage(@PathVariable String slug) {
 
-        String index = readIndexHtml(); // ✅ filesystem-dən oxu
+        var opt = businessRepo.findBySlug(slug);
 
-        try {
-            Optional<MpBusiness> opt = businessRepo.findBySlug(slug);
-            if (opt.isEmpty()) return index;
+        String url = "https://mototaksi.az/" + slug;
 
-            MpBusiness b = opt.get();
+        if (opt.isEmpty()) {
+            return ogPage(
+                    "MotoTaksi",
+                    "Menyu tapılmadı",
+                    "https://mototaksi.az/favicon.ico",
+                    url
+            );
+        }
 
-            String title = safe(b.getBusinessName(), "MotoTaksi Menu");
-            String desc  = safe(b.getBio(), "MenuPro restoran menyusu");
-            String image = safe(b.getProfileImage(), "https://mototaksi.az/android-chrome-192x192.png");
-            String url   = "https://mototaksi.az/" + slug;
+        MpBusiness b = opt.get();
 
-            String og = """
+        String title = safe(b.getBusinessName(), "MenuPro");
+        String desc  = safe(b.getBio(), "Onlayn menyu");
+        String image = safe(b.getProfileImage(), "https://mototaksi.az/favicon.ico");
+
+        // ✅ OG meta + user browser üçün redirect
+        return ogPage(title, desc, image, url);
+    }
+
+    private String ogPage(String title, String desc, String image, String url) {
+        title = esc(title);
+        desc  = esc(desc);
+        image = esc(image);
+        url   = esc(url);
+
+        return """
+            <!doctype html>
+            <html lang="az">
+              <head>
+                <meta charset="utf-8"/>
                 <title>%s</title>
                 <meta name="description" content="%s"/>
                 <meta property="og:title" content="%s"/>
@@ -46,17 +56,17 @@ public class MpShareController {
                 <meta property="og:image" content="%s"/>
                 <meta property="og:type" content="website"/>
                 <meta property="og:url" content="%s"/>
-                """.formatted(esc(title), esc(desc), esc(title), esc(desc), esc(image), esc(url));
-
-            return index.replace("</head>", og + "\n</head>");
-        } catch (Exception e) {
-            // ✅ heç olmasa 500 qaytarmayaq
-            return index;
-        }
-    }
-
-    private String readIndexHtml() throws Exception {
-        return Files.readString(Path.of(indexPath), StandardCharsets.UTF_8);
+                <meta name="twitter:card" content="summary_large_image"/>
+                <meta name="twitter:title" content="%s"/>
+                <meta name="twitter:description" content="%s"/>
+                <meta name="twitter:image" content="%s"/>
+                <script>window.location.replace("%s");</script>
+              </head>
+              <body>
+                <noscript><a href="%s">Davam et</a></noscript>
+              </body>
+            </html>
+            """.formatted(title, desc, title, desc, image, url, title, desc, image, url, url);
     }
 
     private String safe(String v, String def) {
@@ -65,11 +75,11 @@ public class MpShareController {
         return s.isEmpty() ? def : s;
     }
 
-    // sadə HTML escape (səhv meta qırılmasın deyə)
     private String esc(String s) {
+        if (s == null) return "";
         return s.replace("&", "&amp;")
-                .replace("\"", "&quot;")
                 .replace("<", "&lt;")
-                .replace(">", "&gt;");
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
     }
 }
