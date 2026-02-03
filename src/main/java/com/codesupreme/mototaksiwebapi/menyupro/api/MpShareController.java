@@ -17,7 +17,8 @@ public class MpShareController {
 
         var opt = businessRepo.findBySlug(slug);
 
-        String url = "https://mototaksi.az/" + slug;
+        String url = "https://mototaksi.az/menupro/" + slug;
+
 
         if (opt.isEmpty()) {
             return ogPage(
