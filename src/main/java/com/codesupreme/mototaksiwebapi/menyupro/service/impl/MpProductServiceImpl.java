@@ -39,9 +39,7 @@ public class MpProductServiceImpl implements MpProductService {
 
         MpProductDto result = mapper.map(productRepo.save(product), MpProductDto.class);
         result.categoryId = category.getId();
-        result.categoryName = category.getName(); // ✅ əlavə et
         return result;
-
     }
 
     @Override
@@ -53,11 +51,9 @@ public class MpProductServiceImpl implements MpProductService {
                 .map(p -> {
                     MpProductDto dto = mapper.map(p, MpProductDto.class);
                     dto.categoryId = p.getCategory().getId();
-                    dto.categoryName = p.getCategory().getName(); // ✅ əlavə et
                     return dto;
                 })
                 .toList();
-
     }
 
     @Override
@@ -75,12 +71,6 @@ public class MpProductServiceImpl implements MpProductService {
         product.setPrice(dto.price);
         product.setImage(dto.image);
 
-        MpProduct saved = productRepo.save(product);
-
-        MpProductDto out = mapper.map(saved, MpProductDto.class);
-        out.categoryId = saved.getCategory().getId();
-        out.categoryName = saved.getCategory().getName();
-        return out;
+        return mapper.map(productRepo.save(product), MpProductDto.class);
     }
-
 }
