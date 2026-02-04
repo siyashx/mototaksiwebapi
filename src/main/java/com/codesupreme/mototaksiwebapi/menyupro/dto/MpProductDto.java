@@ -15,5 +15,6 @@ public class MpProductDto {
     public Double price;
     public String image;
     public Long categoryId;
+    public String categoryName;
 }
 
