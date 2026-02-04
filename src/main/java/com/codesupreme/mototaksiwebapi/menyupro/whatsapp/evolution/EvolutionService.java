@@ -33,19 +33,23 @@ public class EvolutionService {
 
         String normalized = PhoneUtil.normalize(phone);
 
+        String adminPanel = "https://mototaksi.az/menupro/admin";
+
         String msg = """
-            🆕 Yeni MenuPro Biznes Qeydiyyatı
-            
-            Biznes: %s
-            Telefon: %s
-            
-            Admin paneldən təsdiqləyin.
-            """.formatted(businessName, normalized);
+        🆕 Yeni MenuPro Biznes Qeydiyyatı
+
+        Biznes: %s
+        Telefon: %s
+        Admin paneldən təsdiqləyin.
+
+        %s
+        """.formatted(businessName, normalized, adminPanel);
 
         // 🔴 Admin nömrəsi
         String adminPhone = "994709559984";
 
         client.sendText(adminPhone, msg);
     }
+
 
 }
