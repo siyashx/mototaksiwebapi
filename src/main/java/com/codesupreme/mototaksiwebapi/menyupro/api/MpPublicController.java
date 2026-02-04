@@ -30,6 +30,7 @@ public class MpPublicController {
         MpBusiness business = businessRepo.findBySlug(slug).orElseThrow();
 
         MpPublicProfileDto dto = new MpPublicProfileDto();
+        dto.id = business.getId();
         dto.businessName = business.getBusinessName();
         dto.bio = business.getBio();
         dto.profileImage = business.getProfileImage();

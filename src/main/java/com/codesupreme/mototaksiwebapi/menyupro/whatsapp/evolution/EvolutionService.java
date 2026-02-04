@@ -39,7 +39,6 @@ public class EvolutionService {
             Biznes: %s
             Telefon: %s
             
-            Status: PENDING
             Admin paneldən təsdiqləyin.
             """.formatted(businessName, normalized);
 

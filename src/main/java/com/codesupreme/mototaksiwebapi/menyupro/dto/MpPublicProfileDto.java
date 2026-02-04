@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class MpPublicProfileDto {
+    public Long id;
     public String businessName;
     public String bio;
     public String profileImage;
