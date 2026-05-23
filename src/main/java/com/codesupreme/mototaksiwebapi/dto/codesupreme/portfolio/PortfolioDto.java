@@ -17,13 +17,19 @@ public class PortfolioDto {
 
     private String title;
     private String description;
+
     private String imageUrl;
+    private String imageAlt;
+
     private String category;
+    private String categoryKey;
+
     private String client;
     private String projectUrl;
     private String slug;
 
+    private Boolean active;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
-

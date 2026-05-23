@@ -12,8 +12,13 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     Optional<Portfolio> findBySlug(String slug);
 
-    List<Portfolio> findByCategory(String category);
+    List<Portfolio> findByCategoryIgnoreCase(String category);
+
+    List<Portfolio> findByCategoryKeyIgnoreCase(String categoryKey);
+
+    List<Portfolio> findByActiveTrueOrderByCreatedAtDesc();
 
     boolean existsBySlug(String slug);
-}
 
+    boolean existsBySlugAndIdNot(String slug, Long id);
+}

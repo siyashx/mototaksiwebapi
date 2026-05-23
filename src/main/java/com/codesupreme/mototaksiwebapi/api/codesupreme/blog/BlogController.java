@@ -1,8 +1,7 @@
 package com.codesupreme.mototaksiwebapi.api.codesupreme.blog;
 
 import com.codesupreme.mototaksiwebapi.dto.codesupreme.blog.BlogDto;
-import com.codesupreme.mototaksiwebapi.model.codesupreme.blog.Blog;
-import com.codesupreme.mototaksiwebapi.service.impl.codesupreme.blog.BlogServiceImpl;
+import com.codesupreme.mototaksiwebapi.service.inter.codesupreme.blog.BlogServiceInter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,76 +10,113 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v6/blog")
+@CrossOrigin(origins = "*")
 public class BlogController {
 
-    private final BlogServiceImpl blogService;
+    private final BlogServiceInter blogService;
 
-    public BlogController(BlogServiceImpl blogService) {
+    public BlogController(BlogServiceInter blogService) {
         this.blogService = blogService;
     }
 
-    // List all blogs
+    // Saytda görünəcək aktiv bloglar
     @GetMapping
-    public List<BlogDto> getAllBlogs() {
-        return blogService.getAllBlogs();
+    public ResponseEntity<List<BlogDto>> getActiveBlogs() {
+        return ResponseEntity.ok(blogService.getActiveBlogs());
     }
 
-    // Get blog by ID
+    // Admin panel üçün bütün bloglar
+    @GetMapping("/all")
+    public ResponseEntity<List<BlogDto>> getAllBlogs() {
+        return ResponseEntity.ok(blogService.getAllBlogs());
+    }
+
+    // Blogu ID ilə tapmaq
     @GetMapping("/{blogId}")
-    public ResponseEntity<?> getBlogById(@PathVariable("blogId") Long blogId) {
+    public ResponseEntity<?> getBlogById(@PathVariable Long blogId) {
         BlogDto blogDto = blogService.getBlogById(blogId);
-        if (blogDto != null) {
-            return ResponseEntity.ok(blogDto);
+
+        if (blogDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Blog bu ID ilə tapılmadı.");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Blog doesn't exist with given ID.");
+
+        return ResponseEntity.ok(blogDto);
     }
 
-    // Create blog
+    // Blogu slug ilə tapmaq
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<?> getBlogBySlug(@PathVariable String slug) {
+        BlogDto blogDto = blogService.getBlogBySlug(slug);
+
+        if (blogDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Blog bu slug ilə tapılmadı.");
+        }
+
+        return ResponseEntity.ok(blogDto);
+    }
+
+    // Yeni blog yaratmaq
     @PostMapping
     public ResponseEntity<BlogDto> createBlog(@RequestBody BlogDto blogDto) {
         return blogService.createBlog(blogDto);
     }
 
-    // Update blog
+    // Blog yeniləmək
     @PutMapping("/{blogId}")
     public ResponseEntity<?> updateBlog(
-            @PathVariable("blogId") Long blogId,
+            @PathVariable Long blogId,
             @RequestBody BlogDto blogDto
     ) {
         BlogDto updatedBlog = blogService.updateBlog(blogId, blogDto);
-        if (updatedBlog != null) {
-            return ResponseEntity.ok(updatedBlog);
+
+        if (updatedBlog == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Yenilənəcək blog tapılmadı.");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Blog not found to update.");
+
+        return ResponseEntity.ok(updatedBlog);
     }
 
-    // Search by title keyword
+    // Başlığa görə axtarış
     @GetMapping("/search")
-    public ResponseEntity<List<BlogDto>> searchBlogs(@RequestParam("keyword") String keyword) {
-        List<BlogDto> result = blogService.searchBlogsByTitle(keyword);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<BlogDto>> searchBlogsByTitle(
+            @RequestParam String keyword
+    ) {
+        return ResponseEntity.ok(blogService.searchBlogsByTitle(keyword));
     }
 
-    // Filter by category
+    // Kateqoriya adına görə filter
+    // Məsələn: /api/v6/blog/category?category=SEO
     @GetMapping("/category")
-    public ResponseEntity<List<BlogDto>> getBlogsByCategory(@RequestParam("category") String category) {
-        List<BlogDto> result = blogService.getBlogsByCategory(category);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<BlogDto>> getBlogsByCategory(
+            @RequestParam String category
+    ) {
+        return ResponseEntity.ok(blogService.getBlogsByCategory(category));
     }
 
-    // Blogu slug ilə tapmaq üçün yeni endpoint
-    @GetMapping("/slug/{slug}")
-    public Blog getBlogBySlug(@PathVariable String slug) {
-        return blogService.getBlogBySlug(slug);
+    // Kateqoriya key-ə görə filter
+    // Məsələn: /api/v6/blog/category-key?categoryKey=seo
+    @GetMapping("/category-key")
+    public ResponseEntity<List<BlogDto>> getBlogsByCategoryKey(
+            @RequestParam String categoryKey
+    ) {
+        return ResponseEntity.ok(blogService.getBlogsByCategoryKey(categoryKey));
     }
 
-
-    // Delete blog
+    // Blog silmək
     @DeleteMapping("/{blogId}")
-    public ResponseEntity<?> deleteBlog(@PathVariable("blogId") Long blogId) {
+    public ResponseEntity<?> deleteBlog(@PathVariable Long blogId) {
+        BlogDto blogDto = blogService.getBlogById(blogId);
+
+        if (blogDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Silinəcək blog tapılmadı.");
+        }
+
         blogService.deleteBlog(blogId);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok("Blog uğurla silindi.");
     }
 }

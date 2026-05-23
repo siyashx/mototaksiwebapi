@@ -9,16 +9,19 @@ public interface PortfolioServiceInter {
 
     List<PortfolioDto> getAllPortfolios();
 
+    List<PortfolioDto> getActivePortfolios();
+
     PortfolioDto getPortfolioById(Long id);
+
+    PortfolioDto getPortfolioBySlug(String slug);
 
     ResponseEntity<PortfolioDto> createPortfolio(PortfolioDto portfolioDto);
 
     PortfolioDto updatePortfolio(Long id, PortfolioDto portfolioDto);
 
-    void deletePortfolio(Long id);
-
     List<PortfolioDto> getPortfoliosByCategory(String category);
 
-    PortfolioDto getPortfolioBySlug(String slug);
-}
+    List<PortfolioDto> getPortfoliosByCategoryKey(String categoryKey);
 
+    void deletePortfolio(Long id);
+}

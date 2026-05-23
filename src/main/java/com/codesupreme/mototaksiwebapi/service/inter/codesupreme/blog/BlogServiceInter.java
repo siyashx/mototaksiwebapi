@@ -7,20 +7,23 @@ import java.util.List;
 
 public interface BlogServiceInter {
 
-    BlogDto getBlogById(Long id);
-
     List<BlogDto> getAllBlogs();
 
+    List<BlogDto> getActiveBlogs();
+
+    BlogDto getBlogById(Long id);
+
+    BlogDto getBlogBySlug(String slug);
+
     ResponseEntity<BlogDto> createBlog(BlogDto blogDto);
+
+    BlogDto updateBlog(Long id, BlogDto blogDto);
 
     List<BlogDto> searchBlogsByTitle(String keyword);
 
     List<BlogDto> getBlogsByCategory(String category);
 
-
-
-    BlogDto updateBlog(Long id, BlogDto blogDto);
+    List<BlogDto> getBlogsByCategoryKey(String categoryKey);
 
     void deleteBlog(Long id);
 }
-
