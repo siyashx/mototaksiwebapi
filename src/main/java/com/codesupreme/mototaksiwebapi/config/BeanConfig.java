@@ -17,10 +17,10 @@ public class BeanConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-        .allowedOriginPatterns("*")
-        .allowedMethods("*")
-        .allowedHeaders("*")
-        .allowCredentials(true);
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
